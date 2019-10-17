@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+const mango = require('../mango-fe.js')
+const create_cmd = require('../tools/create')
+const update_cmd = require('../tools/update')
+// 支持直接调用子命令
+const argv = process.argv[2]
+
+if(argv) {
+  if(argv === 'new') {
+    create_cmd.create_new()
+  }
+  if(argv === 'update') {
+    update_cmd.update_cmd(process.cwd())
+  }
+} else {
+  mango.start()
+}
