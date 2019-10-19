@@ -1,7 +1,10 @@
 // Node.js lib
-const { exec } = require('child_process')
+const { execSync } = require('child_process')
 const inquirer = require('inquirer')
-const { clone_tpl } = require('./util')
+const { promisify_clone_tpl } = require('./util')
+const fs = require('fs')
+const path = require('path')
+const resolve = (file, dir) => path.resolve(process.cwd(), dir, file)
 
 // Create Questions
 const create_q = [
@@ -25,8 +28,16 @@ module.exports = {
   create_new() {
     inquirer.prompt(create_q).then(
       ans => {
-        exec(`mkdir ${ans.project_name}`)
-        clone_tpl(ans.project_name, ans.frame)
+        execSync(`mkdir ${ans.project_name}`)
+        promisify_clone_tpl(ans.project_name, ans.frame).then(
+          success => {
+            execSync(`cd ${ans.project_name}`)
+            let originPkg = require(resolve('package.json', ans.project_name))
+            originPkg.name = ans.project_name
+            fs.writeFileSync(resolve('package.json', ans.project_name), JSON.stringify(originPkg, null, 2))
+            process.exit()
+          }
+        )
       }
     )
   }
