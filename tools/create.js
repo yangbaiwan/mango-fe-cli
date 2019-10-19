@@ -35,6 +35,7 @@ module.exports = {
             let originPkg = require(resolve('package.json', ans.project_name))
             originPkg.name = ans.project_name
             fs.writeFileSync(resolve('package.json', ans.project_name), JSON.stringify(originPkg, null, 2))
+            console.log(`${ans.project_name} 项目创建完成，执行 cd ${ans.project_name} && yarn install`)
             process.exit()
           }
         )

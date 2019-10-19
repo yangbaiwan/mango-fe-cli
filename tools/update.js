@@ -1,8 +1,11 @@
 // Node.js lib
 const { exec, execSync } = require('child_process')
 const inquirer = require('inquirer')
+const fs = require('fs')
+const path = require('path')
+const resolve = file => path.resolve(process.cwd(), file)
 // tools
-const { clone_tpl, promisify_clone_tpl } = require('./util')
+const { promisify_clone_tpl } = require('./util')
 
 const update_q = [
   {
@@ -36,7 +39,10 @@ module.exports = {
                     execSync(`mkdir _update_`)
                     promisify_clone_tpl(process.cwd()+'/_update_', ans.frame).then(
                       res => {
+                        let originPkg = require(resolve('package.json'))
                         execSync(`cd _update_ && rm -rf src && cd .. && cp -fr _update_/* ./ && rm -rf _update_`)
+                        fs.writeFileSync(resolve('package.json'), JSON.stringify(originPkg, null, 2))
+                        console.log('更新完成！')
                         process.exit()
                       }
                     )
